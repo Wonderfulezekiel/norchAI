@@ -6,12 +6,43 @@ export function WaitlistForm() {
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState('');
   
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // In a real app, this would send the data to your backend
-    console.log("Form submitted with:", { email, name });
-    setSubmitted(true);
+    setIsSubmitting(true);
+    setError('');
+    
+    try {
+      // Replace YOUR_FORM_ENDPOINT with the actual endpoint from your Getform dashboard
+      const endpoint = "https://getform.io/f/YOUR_FORM_ENDPOINT";
+      
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+          name: name,
+          email: email,
+          source: 'NorchAI Waitlist'
+        })
+      });
+      
+      if (response.ok) {
+        setSubmitted(true);
+        setEmail('');
+        setName('');
+      } else {
+        setError('Something went wrong. Please try again.');
+      }
+    } catch (err) {
+      setError('Network error. Please check your connection and try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
   
   return (
@@ -95,10 +126,17 @@ export function WaitlistForm() {
                   
                   <div>
                     <form onSubmit={handleSubmit} className="space-y-6">
+                      {error && (
+                        <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">
+                          {error}
+                        </div>
+                      )}
+                      
                       <div>
                         <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2 font-body">Full Name</label>
                         <input
                           id="name"
+                          name="name"
                           type="text"
                           value={name}
                           onChange={(e) => setName(e.target.value)}
@@ -112,6 +150,7 @@ export function WaitlistForm() {
                         <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2 font-body">Email Address</label>
                         <input
                           id="email"
+                          name="email"
                           type="email"
                           value={email}
                           onChange={(e) => setEmail(e.target.value)}
@@ -121,11 +160,15 @@ export function WaitlistForm() {
                         />
                       </div>
                       
+                      {/* Hidden field for source tracking */}
+                      <input type="hidden" name="source" value="NorchAI Waitlist" />
+                      
                       <button
                         type="submit"
-                        className="w-full bg-primary text-white font-medium py-3 px-6 rounded-lg shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all hover:-translate-y-0.5 font-body"
+                        disabled={isSubmitting}
+                        className={`w-full bg-primary text-white font-medium py-3 px-6 rounded-lg shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all hover:-translate-y-0.5 font-body ${isSubmitting ? 'opacity-70 cursor-not-allowed' : ''}`}
                       >
-                        Join the Waitlist
+                        {isSubmitting ? 'Submitting...' : 'Join the Waitlist'}
                       </button>
                       
                       <p className="text-xs text-gray-500 text-center font-body">

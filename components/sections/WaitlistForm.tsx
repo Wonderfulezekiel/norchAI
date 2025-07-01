@@ -9,16 +9,16 @@ export function WaitlistForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
   
+  // Using Formspree for form submissions
+  const FORMSPREE_ENDPOINT = "https://formspree.io/f/mvgrlnwa";
+  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
     setError('');
     
     try {
-      // Using Formspree endpoint
-      const endpoint = "https://formspree.io/f/mvgrlnwa";
-      
-      const response = await fetch(endpoint, {
+      const response = await fetch(FORMSPREE_ENDPOINT, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

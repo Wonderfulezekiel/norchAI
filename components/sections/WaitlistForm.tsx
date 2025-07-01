@@ -15,8 +15,8 @@ export function WaitlistForm() {
     setError('');
     
     try {
-      // Replace YOUR_FORM_ENDPOINT with the actual endpoint from your Getform dashboard
-      const endpoint = "https://getform.io/f/YOUR_FORM_ENDPOINT";
+      // Using Formspree endpoint
+      const endpoint = "https://formspree.io/f/mvgrlnwa";
       
       const response = await fetch(endpoint, {
         method: 'POST',
